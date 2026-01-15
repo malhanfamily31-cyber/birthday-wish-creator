@@ -1,0 +1,221 @@
+import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import FloatingHearts from './FloatingHearts';
+import GreetingCard from './GreetingCard';
+import GreetingModal from './GreetingModal';
+import ProgressReminder from './ProgressReminder';
+import watercolorBg from '@/assets/watercolor-bg.jpeg';
+
+interface GreetingsSceneProps {
+  onComplete: () => void;
+}
+
+const greetings = [
+  {
+    id: 1,
+    shape: 'cake',
+    title: 'A Sweet Birthday Wish',
+    emoji: '🎂',
+    hindiShayari: 'Tumhari khushi meri sabse khoobsurat dua hai 🎂',
+    englishShayari: 'Your happiness is my favourite wish.',
+  },
+  {
+    id: 2,
+    shape: 'heart',
+    title: 'For My Favourite Person',
+    emoji: '💖',
+    hindiShayari: 'Tum ho to har din thoda sa khaas lagta hai 💖',
+    englishShayari: 'With you, ordinary days feel special.',
+  },
+  {
+    id: 3,
+    shape: 'cloud',
+    title: 'Smile First',
+    emoji: '😊',
+    hindiShayari: 'Ek muskaan… aur din ban jaata hai 😊',
+    englishShayari: 'One smile, and everything feels lighter.',
+  },
+  {
+    id: 4,
+    shape: 'envelope',
+    title: 'A Little Feeling',
+    emoji: '💌',
+    hindiShayari: 'Kuch log lafzon se nahi, ehsaason se yaad rehte hain 💌',
+    englishShayari: 'Some people are remembered by feelings, not words.',
+  },
+  {
+    id: 5,
+    shape: 'star',
+    title: 'Something Special',
+    emoji: '✨',
+    hindiShayari: 'Tumhara hona hi kaafi hai, aaj ke din ke liye ✨',
+    englishShayari: 'Just your presence makes today complete.',
+  },
+  {
+    id: 6,
+    shape: 'infinity',
+    title: 'From the Heart',
+    emoji: '💕',
+    hindiShayari: 'Dil ne kaha, aaj tumhe thoda zyada mehsoos karo 💕',
+    englishShayari: 'My heart just wanted you to feel extra special today.',
+  },
+  {
+    id: 7,
+    shape: 'gift',
+    title: 'Almost There…',
+    emoji: '🎁',
+    hindiShayari: 'Bas ek kadam aur… phir kahani poori ho jaayegi 🎁',
+    englishShayari: 'Just one more step before the story completes.',
+  },
+  {
+    id: 8,
+    shape: 'fullCake',
+    title: 'Last but not least…',
+    emoji: '🎂',
+    hindiShayari: 'Kuch pal sirf yaad banne ke liye hote hain…aur aaj unmein se ek hai 💖🎂',
+    englishShayari: 'Some moments are meant to turn into memories.',
+  },
+];
+
+const GreetingsScene = ({ onComplete }: GreetingsSceneProps) => {
+  const [openedCards, setOpenedCards] = useState<number[]>([]);
+  const [selectedGreeting, setSelectedGreeting] = useState<typeof greetings[0] | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    // Play romantic Bollywood background music
+    audioRef.current = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.wav');
+    audioRef.current.loop = true;
+    audioRef.current.volume = 0.3;
+    // Note: Actual romantic song would be added here
+    
+    return () => {
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current = null;
+      }
+    };
+  }, []);
+
+  const handleCardClick = (id: number) => {
+    // Check if card is locked (all previous cards must be opened)
+    const isLocked = id > 1 && !openedCards.includes(id - 1);
+    if (isLocked) return;
+
+    const greeting = greetings.find(g => g.id === id);
+    if (greeting) {
+      setSelectedGreeting(greeting);
+      setIsModalOpen(true);
+      if (!openedCards.includes(id)) {
+        setOpenedCards(prev => [...prev, id]);
+      }
+    }
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedGreeting(null);
+  };
+
+  const handleContinue = () => {
+    setIsModalOpen(false);
+    onComplete();
+  };
+
+  return (
+    <motion.div
+      className="fixed inset-0 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+    >
+      {/* Background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center opacity-30"
+        style={{ backgroundImage: `url(${watercolorBg})` }}
+      />
+      <div className="absolute inset-0 bg-romantic-gradient opacity-90" />
+
+      {/* Watermark Background Text */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
+        <motion.h1
+          className="text-[15vw] font-script text-primary/10 whitespace-nowrap animate-watermark-pulse select-none"
+          style={{ textShadow: '0 0 60px hsl(350 60% 55% / 0.1)' }}
+        >
+          HAPPY BIRTHDAY 🎂💖
+        </motion.h1>
+      </div>
+
+      {/* Floating Hearts */}
+      <FloatingHearts count={12} />
+
+      {/* Progress Reminder */}
+      <ProgressReminder openedCount={openedCards.length} />
+
+      {/* Main Content */}
+      <div className="relative z-20 h-full flex flex-col items-center justify-center p-4">
+        {/* Header */}
+        <motion.div
+          className="text-center mb-8"
+          initial={{ y: -30, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+        >
+          <p className="font-script text-xl md:text-2xl text-primary/70">
+            One surprise at a time… 💖
+          </p>
+        </motion.div>
+
+        {/* Cards Grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl">
+          {greetings.map((greeting) => (
+            <GreetingCard
+              key={greeting.id}
+              id={greeting.id}
+              shape={greeting.shape}
+              title={greeting.title}
+              emoji={greeting.emoji}
+              isOpen={openedCards.includes(greeting.id)}
+              isLocked={greeting.id > 1 && !openedCards.includes(greeting.id - 1)}
+              onClick={() => handleCardClick(greeting.id)}
+            />
+          ))}
+        </div>
+
+        {/* Progress */}
+        <motion.div
+          className="mt-8 flex items-center gap-2"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1 }}
+        >
+          <div className="flex gap-1">
+            {greetings.map((_, i) => (
+              <div
+                key={i}
+                className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                  openedCards.includes(i + 1) ? 'bg-gold' : 'bg-primary/20'
+                }`}
+              />
+            ))}
+          </div>
+          <span className="text-sm text-muted-foreground font-elegant ml-2">
+            {openedCards.length} / 8 opened
+          </span>
+        </motion.div>
+      </div>
+
+      {/* Greeting Modal */}
+      <GreetingModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        greeting={selectedGreeting}
+        isLast={selectedGreeting?.id === 8}
+        onContinue={handleContinue}
+      />
+    </motion.div>
+  );
+};
+
+export default GreetingsScene;
