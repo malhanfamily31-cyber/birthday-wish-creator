@@ -20,9 +20,10 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Happy Birthday song would play here
-    audioRef.current = new Audio();
+    // Load Happy Birthday song
+    audioRef.current = new Audio('/audio/happy-birthday.mp3');
     audioRef.current.volume = 0.5;
+    audioRef.current.loop = true;
     
     return () => {
       if (audioRef.current) {
@@ -33,6 +34,10 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
 
   const handleStartCelebration = () => {
     setStep('cake');
+    // Start Happy Birthday song
+    if (audioRef.current) {
+      audioRef.current.play().catch(() => {});
+    }
   };
 
   const handleCakeCut = () => {
