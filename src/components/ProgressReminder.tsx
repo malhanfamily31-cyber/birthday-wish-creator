@@ -6,9 +6,9 @@ interface ProgressReminderProps {
 }
 
 const reminders: Record<number, string> = {
-  3: "3 surprises opened… more waiting 💕",
-  5: "Halfway through… don't stop now ✨",
-  7: "Just one last surprise left 🎁",
+  3: "Warning! 🚨 Sirf 3 khule… abhi 5 aur baaki hain! 💕",
+  5: "Halfway done! 💖 Ruk mat… mazaa to aage hai ✨",
+  7: "Almost there! 🔥 Bas ek last surprise bacha hai 🎁",
 };
 
 const ProgressReminder = ({ openedCount }: ProgressReminderProps) => {

@@ -183,6 +183,15 @@ const GreetingsScene = ({ onComplete }: GreetingsSceneProps) => {
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
+          <motion.h1
+            className="font-script text-3xl md:text-5xl text-gold mb-2"
+            animate={{ 
+              textShadow: ['0 0 20px hsl(42 85% 55% / 0.5)', '0 0 40px hsl(42 85% 55% / 0.8)', '0 0 20px hsl(42 85% 55% / 0.5)']
+            }}
+            transition={{ duration: 2, repeat: Infinity }}
+          >
+            HAPPY BIRTHDAY MY LOVE💞
+          </motion.h1>
           <p className="font-script text-xl md:text-2xl text-primary/70">
             One surprise at a time… 💖
           </p>
