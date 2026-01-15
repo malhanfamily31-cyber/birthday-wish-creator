@@ -3,9 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import birthdayCake from '@/assets/birthday-cake.png';
 import cakeSlice from '@/assets/cake-slice.png';
-import memory1 from '@/assets/couple-memory-1.jpg';
-import memory2 from '@/assets/couple-memory-2.jpg';
-import memory3 from '@/assets/couple-memory-3.jpg';
+import memory1 from '@/assets/memory-1.jpg';
+import memory2 from '@/assets/memory-2.jpg';
+import memory3 from '@/assets/memory-3.jpg';
+import memory4 from '@/assets/memory-4.jpg';
+import memory5 from '@/assets/memory-5.jpg';
 import watercolorBg from '@/assets/watercolor-bg.jpeg';
 import FloatingHearts from './FloatingHearts';
 
@@ -13,7 +15,13 @@ interface FinalCelebrationProps {
   onBack: () => void;
 }
 
-const memories = [memory1, memory2, memory3, memory1, memory2, memory3];
+// Images and videos for memories
+const imageMemories = [memory1, memory2, memory3, memory4, memory5];
+const videoMemories = [
+  '/videos/memory-video-1.mp4',
+  '/videos/memory-video-2.mp4',
+  '/videos/memory-video-3.mp4',
+];
 
 const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
   const [step, setStep] = useState<'intro' | 'cake' | 'slice' | 'memories' | 'final'>('intro');
@@ -287,14 +295,14 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {/* Floating Memories - Full screen visible */}
+            {/* Floating Images */}
             <div className="absolute inset-0 overflow-hidden">
-              {memories.map((memory, i) => (
+              {imageMemories.map((memory, i) => (
                 <motion.div
-                  key={i}
+                  key={`img-${i}`}
                   className="absolute w-40 md:w-56 rounded-xl overflow-hidden shadow-2xl"
                   style={{
-                    left: `${10 + (i % 3) * 30}%`,
+                    left: `${5 + (i % 4) * 24}%`,
                     top: '110%',
                     border: '4px solid white',
                   }}
@@ -306,7 +314,7 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
                   transition={{
                     duration: 12 + i * 2,
                     repeat: Infinity,
-                    delay: i * 1.5,
+                    delay: i * 1.2,
                     ease: "linear",
                   }}
                 >
@@ -314,6 +322,39 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
                     src={memory} 
                     alt={`Memory ${i + 1}`} 
                     className="w-full h-48 md:h-64 object-cover"
+                  />
+                </motion.div>
+              ))}
+
+              {/* Floating Videos - Muted */}
+              {videoMemories.map((video, i) => (
+                <motion.div
+                  key={`vid-${i}`}
+                  className="absolute w-44 md:w-60 rounded-xl overflow-hidden shadow-2xl"
+                  style={{
+                    left: `${15 + (i % 3) * 28}%`,
+                    top: '115%',
+                    border: '4px solid white',
+                  }}
+                  animate={{
+                    y: [0, -window.innerHeight * 1.6],
+                    rotate: [5 - i * 4, -5 + i * 2],
+                    x: [0, Math.cos(i) * 60],
+                  }}
+                  transition={{
+                    duration: 14 + i * 2.5,
+                    repeat: Infinity,
+                    delay: i * 2 + 3,
+                    ease: "linear",
+                  }}
+                >
+                  <video 
+                    src={video} 
+                    className="w-full h-52 md:h-72 object-cover"
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
                   />
                 </motion.div>
               ))}
@@ -354,7 +395,7 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
           >
             {/* Floating Memories in background */}
             <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
-              {memories.slice(0, 4).map((memory, i) => (
+              {imageMemories.slice(0, 4).map((memory, i) => (
                 <motion.div
                   key={i}
                   className="absolute w-32 md:w-44 rounded-lg overflow-hidden shadow-xl"
