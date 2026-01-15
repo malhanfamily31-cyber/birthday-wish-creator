@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import confetti from 'canvas-confetti';
 import birthdayCake from '@/assets/birthday-cake.png';
+import cakeSlice from '@/assets/cake-slice.png';
 import memory1 from '@/assets/couple-memory-1.jpg';
 import memory2 from '@/assets/couple-memory-2.jpg';
 import memory3 from '@/assets/couple-memory-3.jpg';
@@ -12,22 +13,31 @@ interface FinalCelebrationProps {
   onBack: () => void;
 }
 
-const memories = [memory1, memory2, memory3];
+const memories = [memory1, memory2, memory3, memory1, memory2, memory3];
 
 const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
-  const [step, setStep] = useState<'intro' | 'cake' | 'celebration'>('intro');
+  const [step, setStep] = useState<'intro' | 'cake' | 'slice' | 'memories' | 'final'>('intro');
   const [cakeCut, setCakeCut] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const hbdAudioRef = useRef<HTMLAudioElement | null>(null);
+  const palPalAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     // Load Happy Birthday song
-    audioRef.current = new Audio('/audio/happy-birthday.mp3');
-    audioRef.current.volume = 0.5;
-    audioRef.current.loop = true;
+    hbdAudioRef.current = new Audio('/audio/happy-birthday.mp3');
+    hbdAudioRef.current.volume = 0.5;
+    hbdAudioRef.current.loop = true;
+
+    // Load Pal Pal song for memories
+    palPalAudioRef.current = new Audio('/audio/pal-pal.mp3');
+    palPalAudioRef.current.volume = 0.4;
+    palPalAudioRef.current.loop = true;
     
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
+      if (hbdAudioRef.current) {
+        hbdAudioRef.current.pause();
+      }
+      if (palPalAudioRef.current) {
+        palPalAudioRef.current.pause();
       }
     };
   }, []);
@@ -35,8 +45,8 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
   const handleStartCelebration = () => {
     setStep('cake');
     // Start Happy Birthday song
-    if (audioRef.current) {
-      audioRef.current.play().catch(() => {});
+    if (hbdAudioRef.current) {
+      hbdAudioRef.current.play().catch(() => {});
     }
   };
 
@@ -54,7 +64,8 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
       const timeLeft = animationEnd - Date.now();
       if (timeLeft <= 0) {
         clearInterval(interval);
-        setTimeout(() => setStep('celebration'), 500);
+        // Show cake slice after confetti
+        setTimeout(() => setStep('slice'), 500);
         return;
       }
 
@@ -73,6 +84,21 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
         colors: ['#e8a0a0', '#d4a373', '#ffd700', '#ff69b4', '#ffffff'],
       });
     }, 250);
+  };
+
+  const handleSliceClick = () => {
+    // Stop HBD song, start Pal Pal
+    if (hbdAudioRef.current) {
+      hbdAudioRef.current.pause();
+    }
+    if (palPalAudioRef.current) {
+      palPalAudioRef.current.play().catch(() => {});
+    }
+    setStep('memories');
+  };
+
+  const handleMemoriesComplete = () => {
+    setStep('final');
   };
 
   return (
@@ -205,31 +231,144 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
           </motion.div>
         )}
 
-        {/* Celebration Step */}
-        {step === 'celebration' && (
+        {/* Cake Slice Step */}
+        {step === 'slice' && (
           <motion.div
-            key="celebration"
+            key="slice"
+            className="relative z-20 h-full flex flex-col items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <motion.h2
+              className="font-script text-2xl md:text-3xl text-primary-foreground mb-8"
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+            >
+              Your special slice! 🍰
+            </motion.h2>
+
+            <motion.div
+              className="cursor-pointer hover:scale-105 transition-transform"
+              onClick={handleSliceClick}
+              whileTap={{ scale: 0.95 }}
+              initial={{ scale: 0, rotate: -20 }}
+              animate={{ scale: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 100 }}
+            >
+              <motion.img
+                src={cakeSlice}
+                alt="Cake Slice"
+                className="w-56 md:w-72 h-auto drop-shadow-2xl"
+                animate={{ 
+                  y: [0, -10, 0],
+                }}
+                transition={{ duration: 2, repeat: Infinity }}
+              />
+            </motion.div>
+
+            <motion.p
+              className="text-center text-primary-foreground/70 mt-6 font-elegant"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0.5, 1, 0.5] }}
+              transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
+            >
+              Tap for memories… 💖
+            </motion.p>
+          </motion.div>
+        )}
+
+        {/* Memories Step */}
+        {step === 'memories' && (
+          <motion.div
+            key="memories"
+            className="relative z-20 h-full flex flex-col items-center justify-center p-4 overflow-hidden"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {/* Floating Memories - Full screen visible */}
+            <div className="absolute inset-0 overflow-hidden">
+              {memories.map((memory, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-40 md:w-56 rounded-xl overflow-hidden shadow-2xl"
+                  style={{
+                    left: `${10 + (i % 3) * 30}%`,
+                    top: '110%',
+                    border: '4px solid white',
+                  }}
+                  animate={{
+                    y: [0, -window.innerHeight * 1.5],
+                    rotate: [-10 + i * 5, 10 + i * 3],
+                    x: [0, Math.sin(i) * 80],
+                  }}
+                  transition={{
+                    duration: 12 + i * 2,
+                    repeat: Infinity,
+                    delay: i * 1.5,
+                    ease: "linear",
+                  }}
+                >
+                  <img 
+                    src={memory} 
+                    alt={`Memory ${i + 1}`} 
+                    className="w-full h-48 md:h-64 object-cover"
+                  />
+                </motion.div>
+              ))}
+            </div>
+
+            {/* Continue Button */}
+            <motion.div
+              className="relative z-30 text-center"
+              initial={{ opacity: 0, y: 50 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 2 }}
+            >
+              <motion.h2
+                className="font-script text-3xl md:text-4xl text-primary-foreground mb-6"
+                style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
+              >
+                Beautiful Memories… 💕
+              </motion.h2>
+              <motion.button
+                className="bg-gradient-to-r from-gold to-gold-dark text-foreground px-8 py-4 rounded-full font-elegant text-lg shadow-gold hover:shadow-xl transition-all"
+                onClick={handleMemoriesComplete}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                See Final Message 💖
+              </motion.button>
+            </motion.div>
+          </motion.div>
+        )}
+
+        {/* Final Step */}
+        {step === 'final' && (
+          <motion.div
+            key="final"
             className="relative z-20 h-full flex flex-col items-center justify-center p-4 overflow-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            {/* Floating Memories */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-              {memories.map((memory, i) => (
+            {/* Floating Memories in background */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-40">
+              {memories.slice(0, 4).map((memory, i) => (
                 <motion.div
                   key={i}
-                  className="absolute w-32 md:w-48 rounded-lg overflow-hidden shadow-card opacity-60"
+                  className="absolute w-32 md:w-44 rounded-lg overflow-hidden shadow-xl"
                   style={{
-                    left: `${20 + i * 30}%`,
-                    top: '100%',
+                    left: `${5 + i * 25}%`,
+                    top: '110%',
+                    border: '3px solid white',
                   }}
                   animate={{
                     y: [0, -window.innerHeight * 1.5],
                     rotate: [-5 + i * 5, 5 + i * 3],
-                    x: [0, Math.sin(i) * 50],
                   }}
                   transition={{
-                    duration: 15 + i * 3,
+                    duration: 18 + i * 3,
                     repeat: Infinity,
                     delay: i * 2,
                     ease: "linear",
@@ -238,7 +377,7 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
                   <img 
                     src={memory} 
                     alt={`Memory ${i + 1}`} 
-                    className="w-full h-full object-cover"
+                    className="w-full h-40 md:h-52 object-cover"
                   />
                 </motion.div>
               ))}
@@ -246,13 +385,23 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
 
             {/* Final Message */}
             <motion.div
-              className="text-center z-10 glass-card p-8 md:p-12 rounded-3xl shadow-glow max-w-lg"
+              className="text-center z-10 p-8 md:p-12 rounded-3xl max-w-lg"
+              style={{
+                background: 'linear-gradient(145deg, hsl(220 40% 15% / 0.95), hsl(220 40% 12% / 0.95))',
+                border: '1px solid hsl(42 85% 55% / 0.3)',
+                boxShadow: '0 0 60px hsl(42 85% 55% / 0.2)',
+              }}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.5, type: "spring" }}
             >
+              {/* Gold corners */}
+              <div className="absolute top-0 left-0 w-16 h-16" style={{ background: 'linear-gradient(135deg, hsl(42 85% 55% / 0.2) 0%, transparent 60%)' }} />
+              <div className="absolute bottom-0 right-0 w-16 h-16" style={{ background: 'linear-gradient(315deg, hsl(42 85% 55% / 0.2) 0%, transparent 60%)' }} />
+
               <motion.h1
-                className="font-script text-4xl md:text-5xl text-primary mb-6"
+                className="font-script text-4xl md:text-5xl mb-6"
+                style={{ color: 'hsl(42 85% 65%)' }}
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.8 }}
@@ -261,7 +410,8 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
               </motion.h1>
 
               <motion.p
-                className="font-elegant text-lg md:text-xl text-foreground/80 leading-relaxed mb-4"
+                className="font-elegant text-lg md:text-xl leading-relaxed mb-4"
+                style={{ color: 'hsl(42 85% 80%)' }}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 1 }}
@@ -271,7 +421,8 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
               </motion.p>
 
               <motion.p
-                className="text-muted-foreground font-script text-lg mt-6"
+                className="font-script text-lg mt-6"
+                style={{ color: 'hsl(42 85% 55% / 0.7)' }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.3 }}
@@ -280,9 +431,14 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
               </motion.p>
 
               <motion.button
-                className="mt-8 bg-primary/10 text-primary px-6 py-3 rounded-full font-elegant hover:bg-primary/20 transition-all"
+                className="mt-8 px-6 py-3 rounded-full font-elegant transition-all"
+                style={{
+                  background: 'hsl(42 85% 55% / 0.1)',
+                  color: 'hsl(42 85% 65%)',
+                  border: '1px solid hsl(42 85% 55% / 0.3)',
+                }}
                 onClick={onBack}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, backgroundColor: 'hsl(42 85% 55% / 0.2)' }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}

@@ -18,6 +18,7 @@ const greetings = [
     emoji: '🎂',
     hindiShayari: 'Tumhari khushi meri sabse khoobsurat dua hai 🎂',
     englishShayari: 'Your happiness is my favourite wish.',
+    song: '/audio/dil-ibadat.mp3',
   },
   {
     id: 2,
@@ -26,6 +27,7 @@ const greetings = [
     emoji: '💖',
     hindiShayari: 'Tum ho to har din thoda sa khaas lagta hai 💖',
     englishShayari: 'With you, ordinary days feel special.',
+    song: '/audio/ishq-wala-love.mp3',
   },
   {
     id: 3,
@@ -34,6 +36,7 @@ const greetings = [
     emoji: '😊',
     hindiShayari: 'Ek muskaan… aur din ban jaata hai 😊',
     englishShayari: 'One smile, and everything feels lighter.',
+    song: '/audio/ishq-risk.mp3',
   },
   {
     id: 4,
@@ -42,6 +45,7 @@ const greetings = [
     emoji: '💌',
     hindiShayari: 'Kuch log lafzon se nahi, ehsaason se yaad rehte hain 💌',
     englishShayari: 'Some people are remembered by feelings, not words.',
+    song: '/audio/chaahat.mp3',
   },
   {
     id: 5,
@@ -50,6 +54,7 @@ const greetings = [
     emoji: '✨',
     hindiShayari: 'Tumhara hona hi kaafi hai, aaj ke din ke liye ✨',
     englishShayari: 'Just your presence makes today complete.',
+    song: '/audio/nede-nede.mp3',
   },
   {
     id: 6,
@@ -58,6 +63,7 @@ const greetings = [
     emoji: '💕',
     hindiShayari: 'Dil ne kaha, aaj tumhe thoda zyada mehsoos karo 💕',
     englishShayari: 'My heart just wanted you to feel extra special today.',
+    song: '/audio/hangover.mp3',
   },
   {
     id: 7,
@@ -66,6 +72,7 @@ const greetings = [
     emoji: '🎁',
     hindiShayari: 'Bas ek kadam aur… phir kahani poori ho jaayegi 🎁',
     englishShayari: 'Just one more step before the story completes.',
+    song: '/audio/mann-mera.mp3',
   },
   {
     id: 8,
@@ -74,6 +81,7 @@ const greetings = [
     emoji: '🎂',
     hindiShayari: 'Kuch pal sirf yaad banne ke liye hote hain…aur aaj unmein se ek hai 💖🎂',
     englishShayari: 'Some moments are meant to turn into memories.',
+    song: '/audio/kina-chir.mp3',
   },
 ];
 
@@ -81,21 +89,19 @@ const GreetingsScene = ({ onComplete }: GreetingsSceneProps) => {
   const [openedCards, setOpenedCards] = useState<number[]>([]);
   const [selectedGreeting, setSelectedGreeting] = useState<typeof greetings[0] | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const bgAudioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     // Play Tere Liye romantic Bollywood background music
-    audioRef.current = new Audio('/audio/tere-liye-bg.mp3');
-    audioRef.current.loop = true;
-    audioRef.current.volume = 0.3;
-    audioRef.current.play().catch(() => {
-      // Autoplay may be blocked, will play on first interaction
-    });
+    bgAudioRef.current = new Audio('/audio/tere-liye-bg.mp3');
+    bgAudioRef.current.loop = true;
+    bgAudioRef.current.volume = 0.2;
+    bgAudioRef.current.play().catch(() => {});
     
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current = null;
+      if (bgAudioRef.current) {
+        bgAudioRef.current.pause();
+        bgAudioRef.current = null;
       }
     };
   }, []);
@@ -107,6 +113,10 @@ const GreetingsScene = ({ onComplete }: GreetingsSceneProps) => {
 
     const greeting = greetings.find(g => g.id === id);
     if (greeting) {
+      // Pause background music when opening card
+      if (bgAudioRef.current) {
+        bgAudioRef.current.pause();
+      }
       setSelectedGreeting(greeting);
       setIsModalOpen(true);
       if (!openedCards.includes(id)) {
@@ -118,10 +128,19 @@ const GreetingsScene = ({ onComplete }: GreetingsSceneProps) => {
   const handleCloseModal = () => {
     setIsModalOpen(false);
     setSelectedGreeting(null);
+    // Resume background music
+    if (bgAudioRef.current) {
+      bgAudioRef.current.play().catch(() => {});
+    }
   };
 
   const handleContinue = () => {
     setIsModalOpen(false);
+    // Stop background music before going to final scene
+    if (bgAudioRef.current) {
+      bgAudioRef.current.pause();
+      bgAudioRef.current = null;
+    }
     onComplete();
   };
 
