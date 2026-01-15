@@ -84,11 +84,13 @@ const GreetingsScene = ({ onComplete }: GreetingsSceneProps) => {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    // Play romantic Bollywood background music
-    audioRef.current = new Audio('https://www.soundjay.com/misc/sounds/bell-ringing-05.wav');
+    // Play Tere Liye romantic Bollywood background music
+    audioRef.current = new Audio('/audio/tere-liye-bg.mp3');
     audioRef.current.loop = true;
     audioRef.current.volume = 0.3;
-    // Note: Actual romantic song would be added here
+    audioRef.current.play().catch(() => {
+      // Autoplay may be blocked, will play on first interaction
+    });
     
     return () => {
       if (audioRef.current) {
