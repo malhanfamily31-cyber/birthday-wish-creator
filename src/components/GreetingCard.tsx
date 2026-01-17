@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion';
 import { Lock } from 'lucide-react';
+import greetingCard1Bg from '@/assets/greeting-card-1.jpg';
 
 interface GreetingCardProps {
   id: number;
@@ -13,15 +14,17 @@ interface GreetingCardProps {
 
 // 8 unique card designs based on reference images
 const cardStyles = [
-  // Card 1: Pink/Blush with Gold Lace and Pink Ribbon with Gemstone
+  // Card 1: Pink/Blush with Gold Lace - uses actual image
   {
     bg: 'linear-gradient(145deg, hsl(340 40% 85%), hsl(340 35% 80%))',
     border: 'hsl(42 85% 55% / 0.5)',
     accent: 'hsl(340 50% 70%)',
     textColor: 'hsl(42 85% 35%)',
-    overlayPattern: 'radial-gradient(circle at 20% 20%, hsl(42 85% 65% / 0.3) 2%, transparent 3%), radial-gradient(circle at 80% 80%, hsl(42 85% 65% / 0.3) 2%, transparent 3%)',
-    ribbon: 'hsl(340 45% 75%)',
-    gemstone: true,
+    overlayPattern: 'none',
+    ribbon: 'none',
+    gemstone: false,
+    useImage: true,
+    imageSrc: greetingCard1Bg,
   },
   // Card 2: Gold/Champagne Glitter with Ivory Ribbon
   {
@@ -131,30 +134,43 @@ const GreetingCard = ({ id, title, emoji, isOpen, isLocked, onClick }: GreetingC
         style={{
           background: isOpen 
             ? `linear-gradient(145deg, hsl(42 85% 55% / 0.3), hsl(42 85% 45% / 0.2))`
-            : style.bg,
+            : style.useImage ? 'transparent' : style.bg,
           border: `2px solid ${style.border}`,
         }}
       >
+        {/* Background Image for cards with images */}
+        {style.useImage && style.imageSrc && !isOpen && (
+          <img 
+            src={style.imageSrc} 
+            alt="Card background"
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        )}
+
         {/* Pattern Overlay */}
-        <div 
-          className="absolute inset-0 pointer-events-none"
-          style={{ background: style.overlayPattern }}
-        />
+        {!style.useImage && (
+          <div 
+            className="absolute inset-0 pointer-events-none"
+            style={{ background: style.overlayPattern }}
+          />
+        )}
 
-        {/* Gold Lace Border Effect */}
-        <div 
-          className="absolute inset-0 pointer-events-none"
-          style={{
-            background: `
-              linear-gradient(to right, ${style.accent} 1px, transparent 1px) 0 0 / 8px 100%,
-              linear-gradient(to bottom, ${style.accent} 1px, transparent 1px) 0 0 / 100% 8px
-            `,
-            opacity: 0.1,
-          }}
-        />
+        {/* Gold Lace Border Effect - only for non-image cards */}
+        {!style.useImage && (
+          <div 
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background: `
+                linear-gradient(to right, ${style.accent} 1px, transparent 1px) 0 0 / 8px 100%,
+                linear-gradient(to bottom, ${style.accent} 1px, transparent 1px) 0 0 / 100% 8px
+              `,
+              opacity: 0.1,
+            }}
+          />
+        )}
 
-        {/* Ribbon (horizontal) */}
-        {style.ribbon !== 'none' && (
+        {/* Ribbon (horizontal) - only for non-image cards */}
+        {!style.useImage && style.ribbon !== 'none' && (
           <div 
             className="absolute left-0 right-0 h-6 md:h-8 top-1/2 -translate-y-1/2 z-10"
             style={{ 
