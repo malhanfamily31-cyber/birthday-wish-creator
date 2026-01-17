@@ -135,16 +135,18 @@ const GreetingCard = ({ id, title, emoji, isOpen, isLocked, onClick }: GreetingC
           background: isOpen 
             ? `linear-gradient(145deg, hsl(42 85% 55% / 0.3), hsl(42 85% 45% / 0.2))`
             : style.useImage ? 'transparent' : style.bg,
-          border: `2px solid ${style.border}`,
+          border: style.useImage && !isOpen ? 'none' : `2px solid ${style.border}`,
         }}
       >
         {/* Background Image for cards with images */}
         {style.useImage && style.imageSrc && !isOpen && (
-          <img 
-            src={style.imageSrc} 
-            alt="Card background"
-            className="absolute inset-0 w-full h-full object-cover"
-          />
+          <div className="absolute inset-0 flex items-center justify-end bg-transparent">
+            <img 
+              src={style.imageSrc} 
+              alt="Card background"
+              className="h-full w-auto object-contain"
+            />
+          </div>
         )}
 
         {/* Pattern Overlay */}
