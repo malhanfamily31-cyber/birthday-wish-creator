@@ -4,7 +4,6 @@ import FloatingHearts from './FloatingHearts';
 import GreetingCard from './GreetingCard';
 import GreetingModal from './GreetingModal';
 import ProgressReminder from './ProgressReminder';
-import watercolorBg from '@/assets/watercolor-bg.jpeg';
 
 interface GreetingsSceneProps {
   onComplete: () => void;
@@ -150,21 +149,20 @@ const GreetingsScene = ({ onComplete }: GreetingsSceneProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      style={{
+        background: 'linear-gradient(to bottom, #fff, #ffe4e9)',
+      }}
     >
-      {/* Background */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center opacity-30"
-        style={{ backgroundImage: `url(${watercolorBg})` }}
-      />
-      <div className="absolute inset-0 bg-romantic-gradient opacity-90" />
-
       {/* Watermark Background Text */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none overflow-hidden">
         <motion.h1
-          className="text-[15vw] font-script text-primary/10 whitespace-nowrap animate-watermark-pulse select-none"
-          style={{ textShadow: '0 0 60px hsl(350 60% 55% / 0.1)' }}
+          className="text-[12vw] font-script whitespace-nowrap select-none"
+          style={{ 
+            color: 'rgba(255, 46, 99, 0.05)',
+            fontWeight: 900,
+          }}
         >
-          HAPPY BIRTHDAY 🎂💖
+          HAPPY BIRTHDAY
         </motion.h1>
       </div>
 
@@ -178,27 +176,28 @@ const GreetingsScene = ({ onComplete }: GreetingsSceneProps) => {
       <div className="relative z-20 h-full flex flex-col items-center justify-center p-4">
         {/* Header */}
         <motion.div
-          className="text-center mb-8"
+          className="text-center mb-6"
           initial={{ y: -30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
         >
           <motion.h1
-            className="font-script text-3xl md:text-5xl text-gold mb-2"
+            className="font-script text-3xl md:text-5xl mb-2"
+            style={{ color: '#ff2e63' }}
             animate={{ 
-              textShadow: ['0 0 20px hsl(42 85% 55% / 0.5)', '0 0 40px hsl(42 85% 55% / 0.8)', '0 0 20px hsl(42 85% 55% / 0.5)']
+              textShadow: ['0 0 10px rgba(255,46,99,0.3)', '0 0 20px rgba(255,46,99,0.5)', '0 0 10px rgba(255,46,99,0.3)']
             }}
             transition={{ duration: 2, repeat: Infinity }}
           >
             HAPPY BIRTHDAY MY LOVE💞
           </motion.h1>
-          <p className="font-script text-xl md:text-2xl text-primary/70">
+          <p className="font-elegant text-lg md:text-xl" style={{ color: '#ff2e63' }}>
             One surprise at a time… 💖
           </p>
         </motion.div>
 
-        {/* Cards Grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 max-w-4xl">
+        {/* Cards Grid - 2 columns on mobile, 4 on desktop */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-5 max-w-xl md:max-w-4xl mx-auto">
           {greetings.map((greeting) => (
             <GreetingCard
               key={greeting.id}
@@ -213,24 +212,24 @@ const GreetingsScene = ({ onComplete }: GreetingsSceneProps) => {
           ))}
         </div>
 
-        {/* Progress */}
+        {/* Progress Dots */}
         <motion.div
-          className="mt-8 flex items-center gap-2"
+          className="mt-6 flex items-center gap-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1 }}
         >
-          <div className="flex gap-1">
+          <div className="flex gap-1.5">
             {greetings.map((_, i) => (
               <div
                 key={i}
-                className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                  openedCards.includes(i + 1) ? 'bg-gold' : 'bg-primary/20'
+                className={`w-2.5 h-2.5 rounded-full transition-colors duration-300 ${
+                  openedCards.includes(i + 1) ? 'bg-pink-500' : 'bg-pink-200'
                 }`}
               />
             ))}
           </div>
-          <span className="text-sm text-muted-foreground font-elegant ml-2">
+          <span className="text-sm font-elegant ml-2" style={{ color: '#ff2e63' }}>
             {openedCards.length} / 8 opened
           </span>
         </motion.div>
