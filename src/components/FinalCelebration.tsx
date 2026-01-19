@@ -115,10 +115,13 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      style={{ background: '#1a1a1a' }}
     >
-      {/* Floating Hearts */}
-      <FloatingHearts count={10} />
+      {/* Background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center opacity-20"
+        style={{ backgroundImage: `url(${watercolorBg})` }}
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-foreground/80 via-foreground/60 to-foreground/80" />
 
       {/* Floating Hearts */}
       <FloatingHearts count={10} />
@@ -140,9 +143,9 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
               transition={{ delay: 0.3 }}
             >
               <motion.p
-                className="font-script text-3xl md:text-4xl text-white mb-8"
+                className="font-script text-3xl md:text-4xl text-primary-foreground mb-8"
                 animate={{ 
-                  textShadow: ['0 0 20px rgba(212,175,55,0.3)', '0 0 40px rgba(212,175,55,0.6)', '0 0 20px rgba(212,175,55,0.3)']
+                  textShadow: ['0 0 20px hsl(42 85% 55% / 0.3)', '0 0 40px hsl(42 85% 55% / 0.6)', '0 0 20px hsl(42 85% 55% / 0.3)']
                 }}
                 transition={{ duration: 2, repeat: Infinity }}
               >
@@ -150,8 +153,7 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
               </motion.p>
               
               <motion.button
-                className="px-8 py-4 rounded-full font-elegant text-xl transition-all text-black"
-                style={{ background: '#d4af37' }}
+                className="bg-gradient-to-r from-gold to-gold-dark text-foreground px-8 py-4 rounded-full font-elegant text-xl shadow-gold hover:shadow-xl transition-all"
                 onClick={handleStartCelebration}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -185,7 +187,7 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
             />
 
             <motion.h2
-              className="font-script text-2xl md:text-3xl text-white mb-8"
+              className="font-script text-2xl md:text-3xl text-primary-foreground mb-8"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
             >
@@ -226,7 +228,7 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
 
               {!cakeCut && (
                 <motion.p
-                  className="text-center text-white/70 mt-4 font-elegant"
+                  className="text-center text-primary-foreground/70 mt-4 font-elegant"
                   animate={{ opacity: [0.5, 1, 0.5] }}
                   transition={{ duration: 1.5, repeat: Infinity }}
                 >
@@ -247,7 +249,7 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
             exit={{ opacity: 0 }}
           >
             <motion.h2
-              className="font-script text-2xl md:text-3xl text-white mb-8"
+              className="font-script text-2xl md:text-3xl text-primary-foreground mb-8"
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
             >
@@ -274,7 +276,7 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
             </motion.div>
 
             <motion.p
-              className="text-center text-white/70 mt-6 font-elegant"
+              className="text-center text-primary-foreground/70 mt-6 font-elegant"
               initial={{ opacity: 0 }}
               animate={{ opacity: [0.5, 1, 0.5] }}
               transition={{ duration: 1.5, repeat: Infinity, delay: 0.5 }}
@@ -366,14 +368,13 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
               transition={{ delay: 2 }}
             >
               <motion.h2
-                className="font-script text-3xl md:text-4xl text-white mb-6"
+                className="font-script text-3xl md:text-4xl text-primary-foreground mb-6"
                 style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
               >
                 Beautiful Memories… 💕
               </motion.h2>
               <motion.button
-                className="px-8 py-4 rounded-full font-elegant text-lg transition-all text-black"
-                style={{ background: '#d4af37' }}
+                className="bg-gradient-to-r from-gold to-gold-dark text-foreground px-8 py-4 rounded-full font-elegant text-lg shadow-gold hover:shadow-xl transition-all"
                 onClick={handleMemoriesComplete}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -425,18 +426,23 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
 
             {/* Final Message */}
             <motion.div
-              className="relative text-center z-10 p-8 md:p-12 rounded-3xl max-w-lg"
+              className="text-center z-10 p-8 md:p-12 rounded-3xl max-w-lg"
               style={{
-                background: 'rgba(255, 255, 255, 0.95)',
-                boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
+                background: 'linear-gradient(145deg, hsl(220 40% 15% / 0.95), hsl(220 40% 12% / 0.95))',
+                border: '1px solid hsl(42 85% 55% / 0.3)',
+                boxShadow: '0 0 60px hsl(42 85% 55% / 0.2)',
               }}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               transition={{ delay: 0.5, type: "spring" }}
             >
+              {/* Gold corners */}
+              <div className="absolute top-0 left-0 w-16 h-16" style={{ background: 'linear-gradient(135deg, hsl(42 85% 55% / 0.2) 0%, transparent 60%)' }} />
+              <div className="absolute bottom-0 right-0 w-16 h-16" style={{ background: 'linear-gradient(315deg, hsl(42 85% 55% / 0.2) 0%, transparent 60%)' }} />
+
               <motion.h1
                 className="font-script text-4xl md:text-5xl mb-6"
-                style={{ color: '#ff2e63' }}
+                style={{ color: 'hsl(42 85% 65%)' }}
                 initial={{ y: -20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.8 }}
@@ -446,7 +452,7 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
 
               <motion.p
                 className="font-elegant text-lg md:text-xl leading-relaxed mb-4"
-                style={{ color: '#333' }}
+                style={{ color: 'hsl(42 85% 80%)' }}
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 1 }}
@@ -457,7 +463,7 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
 
               <motion.p
                 className="font-script text-lg mt-6"
-                style={{ color: '#666' }}
+                style={{ color: 'hsl(42 85% 55% / 0.7)' }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.3 }}
@@ -466,16 +472,20 @@ const FinalCelebration = ({ onBack }: FinalCelebrationProps) => {
               </motion.p>
 
               <motion.button
-                className="mt-8 px-6 py-3 rounded-full font-elegant transition-all text-black"
-                style={{ background: '#d4af37' }}
+                className="mt-8 px-6 py-3 rounded-full font-elegant transition-all"
+                style={{
+                  background: 'hsl(42 85% 55% / 0.1)',
+                  color: 'hsl(42 85% 65%)',
+                  border: '1px solid hsl(42 85% 55% / 0.3)',
+                }}
                 onClick={onBack}
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ scale: 1.05, backgroundColor: 'hsl(42 85% 55% / 0.2)' }}
                 whileTap={{ scale: 0.95 }}
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.5 }}
               >
-                Replay Story ✨
+                Back to greetings 💕
               </motion.button>
             </motion.div>
           </motion.div>
